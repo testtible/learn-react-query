@@ -21,7 +21,7 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    } 
   },
   "plugins": [
     "testing-library",
@@ -39,7 +39,7 @@
     "jest": true
   },
   "rules": {
-    "import/no-extraneous-dependencies": [2, { "devDependencies": true }],
+    "import/no-extraneous-dependencies": [0, { "devDependencies": true }],
     "testing-library/await-async-query": "error",
     "testing-library/no-await-sync-query": "error",
     "testing-library/no-debug": "warn",

@@ -1,6 +1,13 @@
 // @ts-nocheck
 import dayjs from 'dayjs';
-import { Dispatch, SetStateAction, useState } from 'react';
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import { useQuery, useQueryClient } from 'react-query';
 
 import { axiosInstance } from '../../../axiosInstance';
 import { queryKeys } from '../../../react-query/constants';
@@ -70,7 +77,30 @@ export function useAppointments(): UseAppointments {
   //
   //    2. The getAppointments query function needs monthYear.year and
   //       monthYear.month
-  const appointments = {};
+
+  const selectFn = useCallback(
+    (data) => getAvailableAppointments(data, user),
+    [user],
+  );
+  const fallback = {};
+  const { data: appointments = fallback } = useQuery(
+    [queryKeys.appointments, monthYear.year, monthYear.month],
+    () => getAppointments(monthYear.year, monthYear.month),
+    {
+      select: showAll ? undefined : selectFn,
+    },
+  );
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const newMonthYear = getNewMonthYear(monthYear, 1);
+
+    queryClient.prefetchQuery(
+      [queryKeys.appointments, newMonthYear.year, newMonthYear.month],
+      () => getAppointments(newMonthYear.year, newMonthYear.month),
+    );
+  }, [queryClient, monthYear]);
 
   /** ****************** END 3: useQuery  ******************************* */
 
